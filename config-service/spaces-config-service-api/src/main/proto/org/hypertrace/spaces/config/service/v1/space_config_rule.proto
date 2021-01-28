@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package org.hypertrace.spaces.config.service.v1;
+
+message SpaceConfigRule {
+  string id = 1;
+  oneof rule_data {
+    AttributeValueRuleData attribute_value_rule_data = 2;
+  }
+}
+
+message AttributeValueRuleData {
+  string attribute_scope = 1;
+  string attribute_key = 2;
+}

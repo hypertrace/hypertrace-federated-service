@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package org.hypertrace.config.service.v1;
+
+import "google/protobuf/struct.proto";
+
+service ConfigService {
+  // Merges the specified config with the existing config and upserts the
+  // resulting config into the store. Also returns the config which is upserted.
+  rpc UpsertConfig(UpsertConfigRequest) returns (UpsertConfigResponse) {}
+
+  // Gets the config for the specified request
+  rpc GetConfig(GetConfigRequest) returns (GetConfigResponse) {}
+
+  // Gets all the configs(i.e. across all the contexts) for the specified request
+  rpc GetAllConfigs(GetAllConfigsRequest) returns (GetAllConfigsResponse) {}
+
+  // Deletes the config for the specified request
+  rpc DeleteConfig(DeleteConfigRequest) returns (DeleteConfigResponse) {}
+}
+
+message UpsertConfigRequest {
+  // required - name of the resource associated with the config
+  string resource_name = 1;
+
+  // required - namespace with which the config resource is associated
+  string resource_namespace = 2;
+
+  // required - config value to be upserted
+  google.protobuf.Value config = 3;
+
+  // optional - only required if config applies to a specific context.
+  // If empty, specified config is associated with a default context.
+  string context = 4;
+}
+
+message UpsertConfigResponse {
+  // config value upserted into the store
+  google.protobuf.Value config = 1;
+}
+
+message GetConfigRequest {
+  // required - name of the resource associated with the config
+  string resource_name = 1;
+
+  // required - namespace with which the config resource is associated
+  string resource_namespace = 2;
+
+  // optional; order matters - specify the contexts in the order of increasing
+  // priority. Example: ["service1", "api1"].
+  // Default context is implicitly appended to the beginning of the list.
+  repeated string contexts = 3;
+}
+
+message GetConfigResponse {
+  // config value returned for the specified request
+  google.protobuf.Value config = 1;
+}
+
+message GetAllConfigsRequest {
+  // required - name of the resource associated with the config
+  string resource_name = 1;
+
+  // required - namespace with which the config resource is associated
+  string resource_namespace = 2;
+}
+
+message GetAllConfigsResponse {
+  // list of config values along with the associated contexts
+  repeated ContextSpecificConfig context_specific_configs = 1;
+}
+
+message ContextSpecificConfig {
+  // context associated with the below config
+  string context = 1;
+
+  // config value which applies to the above context
+  google.protobuf.Value config = 2;
+}
+
+message DeleteConfigRequest {
+  // required - name of the resource associated with the config
+  string resource_name = 1;
+
+  // required - namespace with which the config resource is associated
+  string resource_namespace = 2;
+
+  // required
+  string context = 3;
+}
+
+// empty response
+message DeleteConfigResponse {
+}

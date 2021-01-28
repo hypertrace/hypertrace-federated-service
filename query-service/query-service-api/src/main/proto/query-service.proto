@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.hypertrace.core.query.service.api";
+option java_outer_classname = "QueryServiceProto";
+
+
+package org.hypertrace.core.query.service;
+
+import "request.proto";
+import "response.proto";
+
+service QueryService {
+  rpc execute (QueryRequest) returns (stream ResultSetChunk) {
+  }
+}

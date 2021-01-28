@@ -1,0 +1,9 @@
+# Command to package:
+# helm package --version <chart version> --app-version <app version> <folder containing Chart.yaml>
+apiVersion: v2
+name: hypertrace-graphql-service
+description: A Helm chart for Hypertrace GraphQL
+type: application
+
+# This is the chart version. It will always be set at the command line, this value is meaningless.
+version: 0.1.0

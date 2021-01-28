@@ -10,19 +10,25 @@ plugins {
 var hypertraceUiVersion = "latest"
 
 dependencies {
-  implementation("org.hypertrace.core.attribute.service:attribute-service")
-  implementation("org.hypertrace.core.attribute.service:attribute-service-impl")
-  implementation("org.hypertrace.entity.service:entity-service")
-  implementation("org.hypertrace.entity.service:entity-service-impl")
-  implementation("org.hypertrace.core.query.service:query-service")
-  implementation("org.hypertrace.core.query.service:query-service-impl")
-  implementation("org.hypertrace.gateway.service:gateway-service")
-  implementation("org.hypertrace.gateway.service:gateway-service-impl")
-  implementation("org.hypertrace.graphql:hypertrace-graphql-service")
+  implementation(project(":attribute-service:attribute-service"))
+  implementation(project(":attribute-service:attribute-service-impl"))
+
+  implementation(project(":entity-service:entity-service"))
+  implementation(project(":entity-service:entity-service-impl"))
+
+  implementation(project(":query-service:query-service"))
+  implementation(project(":query-service:query-service-impl"))
+
+  implementation(project(":gateway-service:gateway-service"))
+  implementation(project(":gateway-service:gateway-service-impl"))
+
+  implementation(project(":hypertrace-graphql:hypertrace-graphql-service"))
+  implementation(project(":config-bootstrapper:config-bootstrapper"))
+
+  implementation(project(":config-service:config-service"))
+  implementation(project(":config-service:config-service-impl"))
+
   implementation("org.hypertrace.core.graphql:hypertrace-core-graphql-spi")
-  implementation("org.hypertrace.core.bootstrapper:config-bootstrapper")
-  implementation("org.hypertrace.config.service:config-service")
-  implementation("org.hypertrace.config.service:config-service-impl")
 
   implementation("org.eclipse.jetty:jetty-server:9.4.35.v20201120")
   implementation("org.eclipse.jetty:jetty-servlet:9.4.35.v20201120")

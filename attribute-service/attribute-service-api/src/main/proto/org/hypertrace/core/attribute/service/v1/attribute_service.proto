@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_outer_classname = "AttributeServiceProto";
+
+package org.hypertrace.core.attribute.service.v1;
+
+import "org/hypertrace/core/attribute/service/v1/attribute_metadata.proto";
+
+service AttributeService {
+  rpc create (AttributeCreateRequest) returns (Empty);
+  rpc delete (AttributeMetadataFilter) returns (Empty);
+  rpc updateSourceMetadata (AttributeSourceMetadataUpdateRequest) returns (Empty);
+  rpc deleteSourceMetadata (AttributeSourceMetadataDeleteRequest) returns (Empty);
+  rpc findAttributes (AttributeMetadataFilter) returns (stream AttributeMetadata);
+  rpc findAll (Empty) returns (stream AttributeMetadata);
+}

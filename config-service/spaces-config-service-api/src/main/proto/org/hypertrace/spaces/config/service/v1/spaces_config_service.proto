@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package org.hypertrace.spaces.config.service.v1;
+
+import "org/hypertrace/spaces/config/service/v1/space_config_rule.proto";
+
+service SpacesConfigService {
+
+  rpc CreateRule (CreateRuleRequest) returns (CreateRuleResponse) {
+  }
+  rpc GetRules (GetRulesRequest) returns (GetRulesResponse) {
+  }
+  rpc UpdateRule (UpdateRuleRequest) returns (UpdateRuleResponse) {
+  }
+  rpc DeleteRule (DeleteRuleRequest) returns (DeleteRuleResponse) {
+  }
+}
+
+message CreateRuleRequest {
+  oneof rule_data {
+    AttributeValueRuleData attribute_value_rule_data = 1;
+  }
+}
+
+message CreateRuleResponse {
+  SpaceConfigRule rule = 1;
+}
+
+message GetRulesRequest {
+}
+
+message GetRulesResponse {
+  repeated SpaceConfigRule rules = 1;
+}
+
+message UpdateRuleRequest {
+  SpaceConfigRule updated_rule = 1;
+}
+
+message UpdateRuleResponse {
+  SpaceConfigRule rule = 1;
+}
+
+message DeleteRuleRequest {
+  string id = 1;
+}
+
+message DeleteRuleResponse {
+}
+

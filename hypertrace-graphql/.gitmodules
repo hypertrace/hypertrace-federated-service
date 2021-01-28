@@ -1,0 +1,4 @@
+[submodule "hypertrace-core-graphql"]
+  path = hypertrace-core-graphql
+  url = https://github.com/hypertrace/hypertrace-core-graphql.git
+  branch = main

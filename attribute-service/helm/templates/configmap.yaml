@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.configMap.name }}
+  labels:
+    release: {{ .Release.Name }}
+data:
+  application.conf: |-
+    document.store {
+      {{- $dst := .Values.configMap.dataStoreType }}
+      dataStoreType = {{ $dst }}
+      {{ $dst }} {
+        {{- range $key, $value := (index .Values "configMap" (printf "%s" $dst)) }}
+        {{- if $value }}
+        {{ $key }} = {{ $value | quote }}
+        {{- end }}
+        {{- end }}
+      }
+    }

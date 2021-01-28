@@ -1,0 +1,77 @@
+###########
+# Deployment and Service
+###########
+replicaCount: 1
+maxUnavailable: 0
+
+image:
+  repository: hypertrace/query-service
+  pullPolicy: IfNotPresent
+  tagOverride: ""
+
+containerPort: 8090
+containerHealthProbePort: 8091
+
+service:
+  type: ClusterIP
+  port: 8090
+
+imagePullSecrets: {}
+
+nodeLabels: {}
+
+javaOpts: "-XX:InitialRAMPercentage=50.0 -XX:MaxRAMPercentage=75.0"
+
+livenessProbe:
+  initialDelaySeconds: 10
+  periodSeconds: 5
+
+readinessProbe:
+  initialDelaySeconds: 2
+  periodSeconds: 5
+
+resources:
+  limits:
+    cpu: 2
+    memory: 768Mi
+  requests:
+    cpu: 100m
+    memory: 768Mi
+
+deploymentLabels:
+  app: query-service
+
+podLabels:
+  app: query-service
+
+podAnnotations: {}
+
+deploymentSelectorMatchLabels:
+  app: query-service
+
+serviceSelectorLabels:
+  app: query-service
+
+###########
+# Config Maps
+###########
+queryServiceConfig:
+  name: query-service-config
+  data:
+    zookeeperConnectionString: zookeeper:2181/pinot/my-views
+    tenantColumnName: tenant_id
+    attributeClient:
+      host: attribute-service
+      port: 9012
+handlers: []
+
+extraHandlers: []
+
+logConfig:
+  name: query-service-log-appender-config
+  monitorInterval: 30
+  rootLogger:
+    level: INFO
+  appender:
+    rolling:
+      enabled: false

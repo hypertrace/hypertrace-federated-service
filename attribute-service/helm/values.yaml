@@ -1,0 +1,77 @@
+###########
+# Deployment and Service
+###########
+replicaCount: 1
+maxUnavailable: 0
+
+image:
+  repository: hypertrace/attribute-service
+  pullPolicy: IfNotPresent
+  tagOverride: ""
+
+imagePullSecrets: {}
+
+containerPort: 9012
+containerHealthProbePort: 9013
+
+service:
+  type: ClusterIP
+  port: 9012
+
+nodeLabels: {}
+
+javaOpts: "-XX:InitialRAMPercentage=50.0 -XX:MaxRAMPercentage=75.0"
+
+livenessProbe:
+  initialDelaySeconds: 10
+  periodSeconds: 5
+readinessProbe:
+  initialDelaySeconds: 2
+  periodSeconds: 5
+
+resources:
+  limits:
+    cpu: 2
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 512Mi
+
+deploymentLabels:
+  app: attribute-service
+
+podLabels:
+  app: attribute-service
+
+podAnnotations: {}
+
+deploymentSelectorMatchLabels:
+  app: attribute-service
+
+serviceSelectorLabels:
+  app: attribute-service
+
+configMap:
+  name: attribute-service-config
+  dataStoreType: "mongo"
+  mongo:
+    host: mongo
+    url: ""
+  postgres:
+    host: postgres
+    port: 5432
+    url: ""
+
+logConfig:
+  name: attribute-service-log-appender-config
+  monitorInterval: 30
+  rootLogger:
+    level: INFO
+  appender:
+    rolling:
+      enabled: false
+
+config-bootstrapper:
+  job:
+    prefix: attribute
+  configurationCommands: {}

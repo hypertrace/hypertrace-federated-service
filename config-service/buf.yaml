@@ -1,0 +1,11 @@
+build:
+  roots:
+    - config-service-api/src/main/proto
+    - spaces-config-service-api/src/main/proto
+lint:
+  use:
+    - DEFAULT
+breaking:
+  use:
+    - PACKAGE
+    - WIRE_JSON

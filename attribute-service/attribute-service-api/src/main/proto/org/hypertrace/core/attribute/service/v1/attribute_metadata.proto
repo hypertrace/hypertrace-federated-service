@@ -1,0 +1,178 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_outer_classname = "AttributeMetadataProto";
+
+package org.hypertrace.core.attribute.service.v1;
+
+
+enum AttributeScope {
+  SCOPE_UNDEFINED = 0;
+  EVENT = 1;
+  ENTITY = 2;
+  TRACE = 3;
+  EVENT_EVENT_EDGE = 4;
+  ENTITY_EVENT_EDGE = 5;
+  ENTITY_ENTITY_EDGE = 6;
+  DOMAIN_EVENT = 7;
+  TRANSACTION = 8;
+  API = 9;
+  SESSION = 10;
+  SERVICE = 11;
+  INTERACTION = 12;
+  API_TRACE = 13;
+  BACKEND = 14;
+  // Deprecate THREAT_ACTOR after UI has switched to ACTOR scope
+  THREAT_ACTOR = 15;
+  BACKEND_TRACE = 16;
+  CLUSTERS_SNAPSHOT = 17;
+  DOMAIN = 18;
+  ACTOR = 19;
+}
+
+enum AttributeKind {
+  KIND_UNDEFINED = 0;
+  TYPE_DOUBLE = 1;
+  TYPE_INT64 = 2;
+  TYPE_BOOL = 3;
+  TYPE_STRING = 4;
+  TYPE_BYTES = 5;
+  TYPE_STRING_ARRAY = 6;
+  TYPE_INT64_ARRAY = 7;
+  TYPE_DOUBLE_ARRAY = 8;
+  TYPE_BOOL_ARRAY = 9;
+  TYPE_STRING_MAP = 10;
+  TYPE_TIMESTAMP = 11;
+}
+
+// TODO: Split Metric and Attribute definition in the future. For V0, let's combine
+enum AttributeType {
+  TYPE_UNDEFINED = 0;
+  ATTRIBUTE = 1;
+  METRIC = 2;
+}
+
+enum AttributeSource {
+  UNDEFINED = 0;
+  EDS = 1; //EntityDataService
+  AS = 2; //Anomaly Service
+  QS = 3; //Query Service
+}
+
+enum AggregateFunction {
+  AGG_UNDEFINED = 0;
+  SUM = 1;
+  AVG = 2;
+  MIN = 3;
+  MAX = 4;
+  COUNT = 5;
+  DISTINCT_COUNT = 6;
+  AVGRATE = 7;
+  PERCENTILE = 8;
+}
+
+//scope + name is unique
+message AttributeMetadata {
+  // Fully qualified name. E.g: Event.attributes.api_name, Event.metrics.error_count
+  string fqn = 1;
+  AttributeKind value_kind = 2;
+  // 1) Provides Decoupling the User-friendly vs internal variable name
+  // 2) Provides shorter form with context inside graphql query
+  // can't be the same for different attribute within the same scope
+  string key = 3;
+  string display_name = 4;
+  AttributeScope scope = 5 [deprecated=true]; // Use scope_string instead
+  bool materialized = 6;
+  // 1) Attributes can have units (cores / seconds) for presentation
+  // 2) Metrics are temporarily combined, and need it for presentation
+  string unit = 7;
+  AttributeType type = 8;
+  // Provides discoverability and presentation for UI
+  repeated string labels = 9;
+  // Supported aggregations
+  repeated AggregateFunction supportedAggregations = 10;
+  // If true, indicates that only aggregations are supported on this Attribute
+  bool onlyAggregationsAllowed = 11;
+  //The sources for this attribute
+  repeated AttributeSource sources = 12;
+  map<string, AttributeSourceMetadata> metadata = 13;
+  string id = 14;
+  bool groupable = 15;
+  AttributeDefinition definition = 16;
+  string scope_string = 17;
+}
+
+message AttributeSourceMetadata {
+  map<string, string> sourceMetadata = 1;
+}
+
+message AttributeCreateRequest {
+  repeated AttributeMetadata attributes = 2;
+}
+
+message AttributeSourceMetadataUpdateRequest {
+  string fqn = 2;
+  AttributeSource source = 3;
+  map<string, string> sourceMetadata = 4;
+}
+
+message AttributeSourceMetadataDeleteRequest {
+  string fqn = 2;
+  AttributeSource source = 3;
+}
+
+// Filter to find the attribute.
+// When field is null or empty value, it is assumed that it is requesting "all".
+// Each field would be an AND operation, but the value inside the field is an
+// OR operation.
+//
+// For example, fqn = "Event.name", and scope = "EVENT", it would return ONLY
+// "Event.name".
+// V0, we only support fully qualifying name as the name filter, but,
+// in the future, we would need to support partial matching for auto-complete
+message AttributeMetadataFilter {
+  repeated string fqn = 1;
+  repeated AttributeScope scope = 2 [deprecated=true]; // Use scope_string instead
+  repeated string key = 4;
+  repeated string scope_string = 5;
+}
+
+message Empty {
+}
+
+message AttributeDefinition {
+  oneof value {
+    Projection projection = 1;
+    string source_path = 2;
+  }
+}
+
+message Projection {
+  oneof value {
+    string attribute_id = 1;
+    LiteralValue literal = 2;
+    ProjectionExpression expression = 3;
+  }
+}
+
+message LiteralValue {
+  oneof value {
+    string string_value = 1;
+    bool boolean_value = 2;
+    double float_value = 3;
+    int64 int_value = 4;
+  }
+}
+
+message ProjectionExpression {
+  ProjectionOperator operator = 1;
+  repeated Projection arguments = 2;
+}
+
+enum ProjectionOperator {
+  PROJECTION_OPERATOR_UNSET = 0;
+  PROJECTION_OPERATOR_CONCAT = 1;
+  PROJECTION_OPERATOR_HASH = 2;
+  PROJECTION_OPERATOR_STRING_EQUALS = 3;
+  PROJECTION_OPERATOR_CONDITIONAL = 4;
+}

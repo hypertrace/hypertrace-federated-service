@@ -1,0 +1,93 @@
+# Default values for the helm chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+#
+# Note about Namespace
+# --------------------
+# It is deliberately left out here and using the helm -n or --namespace flag you can deploy your resources to the same
+# namespace as the release. If you leave it out, your resources will be deployed to the default namespace.
+# Also, note that the namespace you are deploying to should already exist otherwise the helm command will fail.
+# You can always specify a different namespace for a resource by setting it directly in it's yaml file or
+# making it configurable by defining it in this file.
+
+###########
+# Deployment and Service
+###########
+replicaCount: 1
+maxUnavailable: 0
+
+image:
+  repository: hypertrace/config-service
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: {}
+
+containerPort: 50101
+containerAdminPort: 50102
+
+service:
+  type: ClusterIP
+  port: 50101
+
+nodeLabels: {}
+
+javaOpts: "-XX:InitialRAMPercentage=50.0 -XX:MaxRAMPercentage=75.0"
+
+livenessProbe:
+  initialDelaySeconds: 10
+  periodSeconds: 5
+
+readinessProbe:
+  initialDelaySeconds: 2
+  periodSeconds: 5
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+   requests:
+     cpu: 0.1
+     memory: 128Mi
+   limits:
+     cpu: 1
+     memory: 128Mi
+
+deploymentLabels:
+  app: config-service
+
+podLabels:
+  app: config-service
+
+podAnnotations: {}
+
+# The Deployment Selector match labels are different from the pod labels. Note that they should be a subset of the pod
+# labels. You append new labels to them but cannot remove labels. If you remove or modify the labels you will need to
+# delete the existing deployment bearing the same name and then redeploy. This is the reason why they are separated from
+# the pod labels. You can add and remove pod labels without having an effect on the deployment.
+# Also, please use "apiVersion: apps/v1" instead of the deprecated "apiVersion: extensions/v1beta1" for the deployment
+# apiVersion in the yaml file.
+deploymentSelectorMatchLabels:
+  app: config-service
+
+serviceSelectorLabels:
+  app: config-service
+
+###########
+# Config Maps
+###########
+configServiceConfig:
+  name: config-service-config
+  dataStoreType: "mongo"
+  mongo:
+    host: mongo
+    url: ""
+
+logConfig:
+  name: config-service-log-config
+  monitorInterval: 30
+  rootLogger:
+    level: INFO
+  appender:
+    rolling:
+      enabled: false

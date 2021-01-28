@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.serviceConfig.name }}
+  labels:
+    release: {{ .Release.Name }}
+data:
+  application.conf: |-
+    service.name = {{ .Chart.Name }}
+    service.port = {{ .Values.service.port }}
+    service.admin.port = {{ .Values.service.adminPort }}
+
+    {{ if .Values.serviceConfig.defaultTenantId }}
+    defaultTenantId = {{ .Values.serviceConfig.defaultTenantId }}
+    {{ end }}
+
+    graphql.urlPath = {{ .Values.serviceConfig.urlPath }}
+    graphql.corsEnabled = {{ .Values.serviceConfig.corsEnabled }}
+
+    attribute.service = {
+      host = {{ .Values.serviceConfig.attributeService.host }}
+      port = {{ .Values.serviceConfig.attributeService.port }}
+    }
+
+    gateway.service = {
+      host = {{ .Values.serviceConfig.gatewayService.host }}
+      port = {{ .Values.serviceConfig.gatewayService.port }}
+    }
+
+    entity.service = {
+      host = {{ .Values.serviceConfig.entityService.host }}
+      port = {{ .Values.serviceConfig.entityService.port }}
+    }
+
+    config.service = {
+      host = {{ .Values.serviceConfig.configService.host }}
+      port = {{ .Values.serviceConfig.configService.port }}
+    }

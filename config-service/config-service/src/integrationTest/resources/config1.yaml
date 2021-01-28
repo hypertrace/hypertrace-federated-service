@@ -1,0 +1,22 @@
+invoice: 34843
+date   : "2001-01-11"
+bill-to: &id001
+  given  : C1
+  family : D1
+  address:
+    lines: |
+      111 Walkman Dr.
+      Suite #111
+    city    : Royal Oak
+    postal  : 48046
+ship-to: *id001
+product:
+  - sku         : BL394D
+    quantity    : 4
+    description : Basketball
+    price       : 450.00
+tax  : 251.42
+comments:
+  Late afternoon is best.
+  Backup contact is Nancy
+  Billsmer @ 338-4338.
